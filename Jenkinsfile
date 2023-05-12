@@ -1,7 +1,7 @@
 pipeline {
   agent {
     dockerfile {
-      filename: ""
+      filename: "Dockerfile.uwsgi"
       additionalBuildArgs: "-t ${params.IMAGE_NAME}"
       args: "--name ${params.IMAGE_NAME}-cont"
     }
