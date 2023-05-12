@@ -1,15 +1,29 @@
 pipeline {
-  agent {
-    dockerfile {
-      filename: "Dockerfile.uwsgi"
-      additionalBuildArgs: "-t ${params.IMAGE_NAME}"
-      args: "--name ${params.IMAGE_NAME}-cont"
-    }
-  }
+  agent any
+  // agent {
+  //   dockerfile {
+  //     filename "Dockerfile.uwsgi"
+  //     additionalBuildArgs "-t ${params.IMAGE_NAME}"
+  //     args "--name ${params.IMAGE_NAME}-cont"
+  //   }
+  // }
   parameters {
-    string(name: 'IMAGE_NAME', defaultValue: 'newDockerImg', description: 'Name that will have Docker Image')
+    // docker image name must be lowercase
+    string(name: 'IMAGE_NAME', defaultValue: 'new-restapi-img', description: 'Name that will have Docker Image')
   }
   stages {
+    stage('Build') {
+      agent {
+        dockerfile {
+          filename "Dockerfile.uwsgi"
+          additionalBuildArgs "-t ${params.IMAGE_NAME} --no-cache"
+          args "--name ${params.IMAGE_NAME}-cont -p 8090:5000"
+        }
+      }
+      steps {
+        sh 'ls /usr/local/bin | grep uwsgi'
+      }
+    }
     stage('Save Image') {
       input {
         message "Should we continue?"
@@ -21,26 +35,30 @@ pipeline {
 //        }
       }
       steps {
-        echo "docker save ${params.IMAGE_NAME} | gzip > ${params.IMAGE_NAME}.tar.gz"
+        sh "docker save ${params.IMAGE_NAME} | gzip > ${params.IMAGE_NAME}.tar.gz"
       }
     }
     stage('Load image') {
       steps {
-        echo "docker load < ${params.IMAGE_NAME}.tar.gz"
+        sh "docker load < ${params.IMAGE_NAME}.tar.gz"
       }
     }
     stage('Run container') {
       steps {
-        echo "docker run -d -p 8090:5000 --name ${params.IMAGE_NAME}-c ${params.IMAGE_NAME}"
+        sh "docker run -d -p 8090:5000 --name ${params.IMAGE_NAME}-c ${params.IMAGE_NAME}"
       }
     }
     stage('Test') {
       steps {
-        echo "curl -v http://localhost:8090/ai-quotes | grep 200"
+        sh "curl -is -u admin:admin http://localhost:8090/ai-quotes | grep 200"
       }
       post {
         success {
-          archiveArtifact ${params.IMAGE_NAME}.tar.gz
+          archiveArtifacts "${params.IMAGE_NAME}.tar.gz"
+          // echo 'All gone OK!'
+        }
+        always {
+          sh "docker stop ${params.IMAGE_NAME}-c && docker rm ${params.IMAGE_NAME}-c"
         }
       }
     }

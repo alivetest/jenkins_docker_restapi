@@ -168,5 +168,4 @@ def verify_password(username, password):
 
 api.add_resource(Quote, "/ai-quotes", "/ai-quotes/", "/ai-quotes/<int:id>")
 if __name__ == '__main__':
-#    app.run(host="172.16.20.11", debug=True)
     app.run(host="0.0.0.0", debug=True)
