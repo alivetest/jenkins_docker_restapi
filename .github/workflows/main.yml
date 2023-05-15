@@ -12,4 +12,4 @@ jobs:
         uses: actions/checkout@v3
       -
         name: Build
-        uses: ./
+        uses: ./github/actions/
