@@ -11,6 +11,6 @@ description: 'REST API wrote on Python flask as docker image'
 #     description: 'Id, author and quote that will return'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: '/Dockerfile'
   # args:
     # - ${{ inputs.id }}
