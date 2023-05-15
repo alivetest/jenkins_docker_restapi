@@ -1,0 +1,16 @@
+# action.yaml
+name: 'Python REST API docker image builds'
+description: 'REST API wrote on Python flask as docker image'
+# inputs:
+#   # some inputs
+#   id:
+#     description: 'Id of a quote'
+#     required: false
+# outputs:
+#   quote:
+#     description: 'Id, author and quote that will return'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  # args:
+    # - ${{ inputs.id }}
