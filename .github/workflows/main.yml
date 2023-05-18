@@ -13,4 +13,4 @@ jobs:
       -
         name: Build
         # uses: ./
-        run: build -t python_restapi$(date +%s) .
+        run: docker build -t python_restapi$(date +%s) .
