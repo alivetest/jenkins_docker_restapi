@@ -15,7 +15,7 @@ pipeline {
     stage('Build') {
       agent {
         dockerfile {
-          filename "Dockerfile.uwsgi"
+          filename "Dockerfile"
           additionalBuildArgs "-t ${params.IMAGE_NAME} --no-cache"
           args "--name ${params.IMAGE_NAME}-cont -p 8090:5000"
         }
